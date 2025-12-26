@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula API</title>
+    <link rel="icon" href="icons/frieren.png">
+    <style>
+        body {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('gifs/body.gif');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            margin: 0;
+            padding: 20px; /* Espaço para não grudar no mobile */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: white;
+        }
+
+        .form-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        /* Estilização universal para campos de texto, e-mail, número e área de texto */
+        input[type="email"],
+        input[type="number"],
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+
+        textarea {
+            resize: vertical; /* Permite aumentar a altura, mas não a largura */
+            min-height: 80px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .option-item {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            padding: 10px;
+            cursor: pointer;
+            text-align: center;
+            transition: 0.3s;
+        }
+
+        .option-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 8px;
+            background-color: #4CAF50;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <h1>Formulário Dev</h1>
+    
+    <form id="meuFormulario">
+        <div class="input-group">
+            <label>Qual sua senioridade na programação?</label>
+            <div class="options-grid">
+                <label class="option-item"><input type="radio" name="senioridade" value="senior"> Sênior</label>
+                <label class="option-item"><input type="radio" name="senioridade" value="pleno"> Pleno</label>
+                <label class="option-item"><input type="radio" name="senioridade" value="junior"> Júnior</label>
+                <label class="option-item"><input type="radio" name="senioridade" value="iniciante"> Iniciante</label>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label for="discord">Qual seu nick no Discord?</label>
+            <input type="text" id="discord" placeholder="recaihd_" required>
+        </div>
+
+        <div class="input-group">
+            <label for="email">Qual seu email de contato?</label>
+            <input type="email" id="email" placeholder="exemplo@email.com" required>
+        </div>
+
+        <div class="input-group">
+            <label for="idade">Quantos anos você tem?</label>
+            <input type="number" id="idade" placeholder="Sua idade" required>
+        </div>
+
+        <div class="input-group">
+            <label for="objetivo">Qual seu objetivo com a aula?</label>
+            <textarea id="objetivo" placeholder="Conte um pouco sobre o que espera aprender..." required></textarea>
+        </div>
+
+        <button type="submit">Enviar Respostas</button>
+    </form>
+</div>
+
+<script>
+    const form = document.getElementById('meuFormulario');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault(); // Impede a página de recarregar
+
+        // Captura os dados do formulário
+        const dados = {
+            senioridade: document.querySelector('input[name="senioridade"]:checked')?.value || "Não informado",
+            discord: document.getElementById('discord').value,
+            email: document.getElementById('email').value,
+            idade: Number(document.getElementById('idade').value),
+            objetivo: document.getElementById('objetivo').value
+        };
+
+        const URL = window.location.hostname.includes('localhost')
+            ? 'http://localhost:3000/enviar'
+            : '/enviar';
+
+        try {
+            const response = await fetch(URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dados)
+            });
+
+            if (response.ok) {
+                alert('Respostas enviadas com sucesso!');
+                form.reset(); // Limpa o formulário
+            } else {
+                alert('Erro ao enviar dados.');
+            }
+        } catch (error) {
+            console.error('Erro na requisição:', error);
+            alert('Erro ao conectar com o servidor.');
+        }
+    });
+</script>
+</body>
+</html>
